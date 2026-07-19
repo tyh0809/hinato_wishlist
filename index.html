@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陽湊 欲しいものリスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F3FAFF;
+    --pink:#CFE7FF;
+    --pink-deep:#4FA6E0;
+    --mint:#C6F2DE;
+    --mint-deep:#3FBF93;
+    --lavender:#FFF1C2;
+    --lavender-deep:#F2A93C;
+    --sky:#D6EDFF;
+    --sky-deep:#5CA9E8;
+    --coral:#2E86C1;
+    --ink:#38495A;
+    --ink-soft:#7A8C9C;
+    --white:#FFFFFF;
+    --shadow: 0 8px 20px rgba(120, 160, 190, 0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 10% 8%, var(--sky) 0%, transparent 40%),
+      radial-gradient(circle at 90% 5%, var(--pink) 0%, transparent 35%),
+      radial-gradient(circle at 85% 90%, var(--mint) 0%, transparent 40%),
+      radial-gradient(circle at 5% 85%, var(--lavender) 0%, transparent 35%),
+      var(--cream);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    min-height:100vh;
+    padding-bottom: 60px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:relative;
+    text-align:center;
+    padding: 56px 20px 40px;
+    overflow:hidden;
+  }
+  .floaty{
+    position:absolute;
+    font-size: 28px;
+    opacity:.8;
+    animation: bob 6s ease-in-out infinite;
+    user-select:none;
+    pointer-events:none;
+  }
+  .floaty:nth-child(1){ top:10%; left:8%; animation-delay:0s; font-size:34px;}
+  .floaty:nth-child(2){ top:20%; right:10%; animation-delay:1.2s; font-size:26px;}
+  .floaty:nth-child(3){ top:60%; left:4%; animation-delay:2.1s; font-size:24px;}
+  .floaty:nth-child(4){ top:65%; right:6%; animation-delay:.6s; font-size:30px;}
+  .floaty:nth-child(5){ top:5%; left:45%; animation-delay:1.8s; font-size:20px;}
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(-4deg); }
+    50%{ transform: translateY(-14px) rotate(4deg); }
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font-size:14px;
+    letter-spacing:.15em;
+    color: var(--pink-deep);
+    background: var(--white);
+    padding: 6px 18px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    animation: pop-in .6s ease both;
+  }
+  h1{
+    font-family:'Kiwi Maru', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    margin: 0 0 10px;
+    color: var(--ink);
+    animation: pop-in .7s .05s ease both;
+  }
+  h1 .accent{ color: var(--coral); }
+  .sub{
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height:1.9;
+    animation: pop-in .7s .1s ease both;
+  }
+  @keyframes pop-in{
+    0%{ opacity:0; transform: translateY(14px) scale(.96); }
+    100%{ opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .controls{
+    max-width: 980px;
+    margin: 0 auto 30px;
+    padding: 0 20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+  }
+  .control-card{
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    padding: 14px 18px;
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap: 10px;
+  }
+  .control-label{
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight:700;
+    margin-right: 4px;
+    white-space:nowrap;
+  }
+  .chip{
+    border:none;
+    cursor:pointer;
+    font-family:'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--ink-soft);
+    box-shadow: 0 3px 8px rgba(180,140,170,.12);
+    transition: transform .18s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  .chip:hover{ transform: translateY(-2px) scale(1.04); }
+  .chip:active{ transform: scale(.96); }
+  .chip.active{
+    background: var(--coral);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(255,143,163,.45);
+    transform: scale(1.06);
+  }
+  .chip.status-募集中.active{ background: var(--mint-deep); box-shadow:0 6px 14px rgba(127,220,184,.45);}
+  .chip.status-相談中.active{ background: var(--sky-deep); box-shadow:0 6px 14px rgba(143,203,242,.45);}
+  .chip.status-いただきました.active{ background: var(--lavender-deep); box-shadow:0 6px 14px rgba(187,163,245,.45);}
+
+  /* ---------- GRID ---------- */
+  .grid{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+  }
+  .card{
+    background: var(--white);
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    animation: card-in .5s ease both;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
+  }
+  .card:hover{
+    transform: translateY(-6px) rotate(-.6deg) scale(1.02);
+    box-shadow: 0 16px 28px rgba(180,140,170,.28);
+  }
+  @keyframes card-in{
+    0%{ opacity:0; transform: translateY(18px) scale(.92); }
+    100%{ opacity:1; transform: translateY(0) scale(1); }
+  }
+  .card.received{
+    opacity: .5;
+    filter: grayscale(.25);
+  }
+  .card.received:hover{ transform:none; box-shadow: var(--shadow); }
+
+  .badge{
+    align-self:flex-start;
+    font-size: 12px;
+    font-weight:700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    color:#fff;
+  }
+  .badge.status-募集中{ background: var(--mint-deep); }
+  .badge.status-相談中{ background: var(--sky-deep); }
+  .badge.status-いただきました{ background: var(--lavender-deep); }
+
+  .card .maker{
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight:700;
+    letter-spacing:.03em;
+  }
+  .card .name{
+    font-family:'Kiwi Maru', serif;
+    font-size: 18px;
+    line-height:1.4;
+    color: var(--ink);
+    min-height: 50px;
+  }
+  .card .price{
+    font-size: 20px;
+    font-weight:700;
+    color: var(--coral);
+  }
+  .card .price::before{ content:"¥ "; font-size:14px; }
+  .card .price-note{
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: -6px;
+  }
+
+  .card a.link-btn{
+    margin-top: auto;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    text-decoration:none;
+    background: var(--pink);
+    color: var(--ink);
+    font-weight:700;
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .card a.link-btn:hover{
+    background: var(--coral);
+    color:#fff;
+    transform: scale(1.04);
+  }
+  .card .no-link{
+    margin-top:auto;
+    font-size:13px;
+    color: var(--ink-soft);
+    text-align:center;
+    padding: 10px 14px;
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 50px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  footer span{ font-size:16px; }
+
+  .empty{
+    grid-column: 1/-1;
+    text-align:center;
+    padding: 50px 20px;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="floaty">🎈</span>
+  <span class="floaty">⭐</span>
+  <span class="floaty">🧸</span>
+  <span class="floaty">🚀</span>
+  <span class="floaty">☁️</span>
+  <p class="eyebrow">WISH LIST</p>
+  <h1>陽湊<span class="accent">欲しいものリスト</span></h1>
+  <p class="sub">いつも気にかけてくださって、ありがとうございます。<br>
+  よろしければ、こちらの中からお選びいただけると嬉しいです♪</p>
+</header>
+
+<div class="controls">
+  <div class="control-card" id="statusFilters">
+    <span class="control-label">ステータスで絞り込み</span>
+    <button class="chip active" data-status="all">すべて</button>
+    <button class="chip status-募集中" data-status="募集中">募集中</button>
+    <button class="chip status-相談中" data-status="相談中">相談中</button>
+    <button class="chip status-いただきました" data-status="いただきました">いただきました</button>
+  </div>
+  <div class="control-card" id="sortControls">
+    <span class="control-label">並び替え</span>
+    <button class="chip" data-sort="asc">価格が安い順</button>
+    <button class="chip" data-sort="desc">価格が高い順</button>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  <span>🍼</span> Made with love for 陽湊 <span>🍼</span>
+</footer>
+
+<script>
+/* ============================================================
+   商品データ：ここを編集するだけでページ全体が更新されます。
+   status は "募集中" / "相談中" / "いただきました" のいずれか。
+   url が無い場合は "" のままでOK（ボタンが表示されません）。
+   ============================================================ */
+const items = [
+  { name: "マグフォーマー", maker: "ボーネルンド", price: 3300, fromPrice: true, status: "募集中", url: "https://ec.bornelund.co.jp/shop/pages/campaign_magformers.aspx" },
+  { name: "ピックアップパズル 動物園", maker: "ボーネルンド", price: 2750, fromPrice: true, status: "募集中", url: "https://ec.bornelund.co.jp/shop/g/gHY711920/" },
+  { name: "おもちゃ収納ケース 12個入り", maker: "Amazonベーシック", price: 6350, status: "募集中", url: "https://www.amazon.co.jp/dp/B09NS4BJW2" },
+  { name: "ドライブタウン おもちゃ", maker: "マルカ", price: 990, status: "募集中", url: "https://www.maruka.jp/toy/drivetown/#products" },
+  { name: "D-Bike mini wide Honda", maker: "アイデス", price: 11880, status: "募集中", url: "https://shop.idesnet.co.jp/products/dbikeminiwidehonda" },
+  { name: "ソフトブロック アスレチック", maker: "多数", price: 20000, fromPrice: true, status: "募集中", url: "https://www.amazon.co.jp/dp/B0H256ZS4F" },
+  { name: "キッズテント ハウステント", maker: "besrey", price: 6480, status: "募集中", url: "https://www.amazon.co.jp/dp/B0GWQBM5WR" },
+  { name: "Nebula Capsule Air プロジェクター", maker: "Anker", price: 49990, status: "募集中", url: "https://www.ankerjapan.com/pages/nebula-capsule-air" },
+  { name: "アンパンマン 自然の恵 お米からうまれたつみきDX", maker: "アガツマ", price: 6000, status: "募集中", url: "https://www.agatsuma.co.jp/special/okome-tsumiki/" },
+  { name: "モンポケ さいころパズル", maker: "トイローヤル", price: 4000, status: "募集中", url: "https://www.toyroyal.co.jp/products/intellectual-toy/learning/6075.html" },
+  { name: "ニューブロック", maker: "Gakken", price: 3000, fromPrice: true, status: "募集中", url: "https://newblock.jp/" }
+];
+
+let currentStatus = "all";
+let currentSort = "none";
+
+function render(){
+  const grid = document.getElementById("grid");
+  let list = items.filter(it => currentStatus === "all" || it.status === currentStatus);
+
+  if (currentSort === "asc") list = [...list].sort((a,b)=>a.price-b.price);
+  if (currentSort === "desc") list = [...list].sort((a,b)=>b.price-a.price);
+
+  grid.innerHTML = "";
+
+  if (list.length === 0){
+    grid.innerHTML = '<div class="empty">🎈 該当する商品がありません</div>';
+    return;
+  }
+
+  list.forEach((it, i) => {
+    const card = document.createElement("div");
+    card.className = "card" + (it.status === "いただきました" ? " received" : "");
+    card.style.animationDelay = (i * 0.05) + "s";
+
+    const linkHtml = it.url
+      ? `<a class="link-btn" href="${it.url}" target="_blank" rel="noopener noreferrer">商品ページを見る 🔗</a>`
+      : `<div class="no-link">商品ページ準備中</div>`;
+
+    card.innerHTML = `
+      <span class="badge status-${it.status}">${it.status}</span>
+      <span class="maker">${it.maker}</span>
+      <span class="name">${it.name}</span>
+      <span class="price">${it.price.toLocaleString()}${it.fromPrice ? "〜" : ""}</span>
+      ${it.fromPrice ? '<span class="price-note">※これ以上の価格のセットもあります</span>' : ""}
+      ${linkHtml}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById("statusFilters").addEventListener("click", (e)=>{
+  const btn = e.target.closest(".chip");
+  if(!btn) return;
+  currentStatus = btn.dataset.status;
+  document.querySelectorAll("#statusFilters .chip").forEach(c=>c.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+});
+
+document.getElementById("sortControls").addEventListener("click", (e)=>{
+  const btn = e.target.closest(".chip");
+  if(!btn) return;
+  currentSort = btn.dataset.sort;
+  document.querySelectorAll("#sortControls .chip").forEach(c=>c.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
