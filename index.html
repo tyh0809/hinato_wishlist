@@ -100,6 +100,68 @@
     100%{ opacity:1; transform: translateY(0) scale(1); }
   }
 
+  /* ---------- INFO CARD ---------- */
+  .info-card{
+    max-width: 780px;
+    margin: 0 auto 36px;
+    padding: 0 20px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .info-item{
+    background: var(--white);
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap: 4px;
+    animation: pop-in .6s .15s ease both;
+    transition: transform .2s ease;
+  }
+  .info-item:hover{ transform: translateY(-4px) scale(1.03); }
+  .info-icon{ font-size: 26px; }
+  .info-label{
+    font-size: 12px;
+    font-weight:700;
+    color: var(--ink-soft);
+    letter-spacing:.05em;
+  }
+  .info-value{
+    font-family:'Kiwi Maru', serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  /* ---------- TAB BAR ---------- */
+  .tab-bar{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .tab{
+    border:none;
+    cursor:pointer;
+    font-family:'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 18px 18px 0 0;
+    background: rgba(255,255,255,.6);
+    color: var(--ink-soft);
+    transition: transform .2s ease, background .2s ease, color .2s ease;
+  }
+  .tab:hover{ transform: translateY(-2px); }
+  .tab.active{
+    background: var(--white);
+    color: var(--coral);
+    box-shadow: var(--shadow);
+  }
+
   /* ---------- CONTROLS ---------- */
   .controls{
     max-width: 980px;
@@ -279,11 +341,33 @@
   <span class="floaty">☁️</span>
   <p class="eyebrow">WISH LIST</p>
   <h1>陽湊<span class="accent">欲しいものリスト</span></h1>
-  <p class="sub">いつも気にかけてくださって、ありがとうございます。<br>
+  <p class="sub" id="tabNote">いつも気にかけてくださって、ありがとうございます。<br>
   よろしければ、こちらの中からお選びいただけると嬉しいです♪</p>
 </header>
 
+<div class="info-card">
+  <div class="info-item">
+    <span class="info-icon">🎂</span>
+    <span class="info-label">誕生日</span>
+    <span class="info-value">2025年8月9日</span>
+  </div>
+  <div class="info-item">
+    <span class="info-icon">👕</span>
+    <span class="info-label">服のサイズ</span>
+    <span class="info-value">ベビー服 85〜90cm<br>キッズ服 80cm</span>
+  </div>
+  <div class="info-item">
+    <span class="info-icon">👟</span>
+    <span class="info-label">足のサイズ</span>
+    <span class="info-value">11〜12cm(要確認)</span>
+  </div>
+</div>
+
 <div class="controls">
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" data-tab="main">🎁 欲しいものリスト</button>
+    <button class="tab" data-tab="chocotto">🍬 ちょこっとギフト</button>
+  </div>
   <div class="control-card" id="statusFilters">
     <span class="control-label">ステータスで絞り込み</span>
     <button class="chip active" data-status="all">すべて</button>
@@ -310,7 +394,7 @@
    status は "募集中" / "相談中" / "いただきました" のいずれか。
    url が無い場合は "" のままでOK（ボタンが表示されません）。
    ============================================================ */
-const items = [
+const mainItems = [
   { name: "マグフォーマー", maker: "ボーネルンド", price: 3300, fromPrice: true, status: "募集中", url: "https://ec.bornelund.co.jp/shop/pages/campaign_magformers.aspx" },
   { name: "ピックアップパズル 動物園", maker: "ボーネルンド", price: 2750, fromPrice: true, status: "募集中", url: "https://ec.bornelund.co.jp/shop/g/gHY711920/" },
   { name: "おもちゃ収納ケース 12個入り", maker: "Amazonベーシック", price: 6350, status: "募集中", url: "https://www.amazon.co.jp/dp/B09NS4BJW2" },
@@ -318,19 +402,32 @@ const items = [
   { name: "D-Bike mini wide Honda", maker: "アイデス", price: 11880, status: "募集中", url: "https://shop.idesnet.co.jp/products/dbikeminiwidehonda" },
   { name: "ソフトブロック アスレチック", maker: "多数", price: 20000, fromPrice: true, status: "募集中", url: "https://www.amazon.co.jp/dp/B0H256ZS4F" },
   { name: "キッズテント ハウステント", maker: "besrey", price: 6480, status: "募集中", url: "https://www.amazon.co.jp/dp/B0GWQBM5WR" },
-  { name: "積み木 Dreamy Moon -ドリーミィームーン", maker: "GENI", price: 2530, status: "募集中", url: "https://ec.ed-inter.co.jp/c/gr1/PLAY/PLAY02/824009" },
+  { name: "Nebula Capsule Air プロジェクター", maker: "Anker", price: 49990, status: "募集中", url: "https://www.ankerjapan.com/pages/nebula-capsule-air" },
   { name: "アンパンマン 自然の恵 お米からうまれたつみきDX", maker: "アガツマ", price: 6000, status: "募集中", url: "https://www.agatsuma.co.jp/special/okome-tsumiki/" },
   { name: "モンポケ さいころパズル", maker: "トイローヤル", price: 5280, status: "募集中", url: "https://www.toyroyal.co.jp/products/intellectual-toy/learning/6075.html" },
   { name: "ニューブロック", maker: "Gakken", price: 3000, fromPrice: true, status: "募集中", url: "https://newblock.jp/" },
-  { name: "Nebula Capsule Air プロジェクター", maker: "Anker", price: 49990, status: "募集中", url: "https://www.ankerjapan.com/pages/nebula-capsule-air" }
+  { name: "積み木 Dreamy Moon -ドリーミィームーン", maker: "GENI", price: 2530, status: "募集中", url: "" },
+  { name: "ぬいぐるみ", maker: "ハッシュパピー", price: 1430, fromPrice: true, status: "募集中", url: "https://shop.hushpuppies-apparel.co.jp/item_list/00404/" },
+  { name: "おままごと野菜(マグネット)", maker: "ウッディプッディ", price: 1100, fromPrice: true, status: "募集中", url: "https://www.woodypuddy.com/c/85887/g01-1060" }
 ];
 
+/* ちょこっとギフト：誕生日などの記念日ではなく、気軽に贈りたい時向けの軽いアイテム */
+const chocottoItems = [
+  { name: "お風呂用おもちゃネット", maker: "多数", price: 1000, fromPrice: true, status: "募集中", url: "https://www.amazon.co.jp/dp/B0F7H7NQFM" },
+  { name: "金魚(アヒル・ボール)すくい体験セット", maker: "多数", price: 1000, fromPrice: true, status: "募集中", url: "https://www.amazon.co.jp/dp/B0GRCX7KLP" }
+];
+
+let currentTab = "main";
 let currentStatus = "all";
 let currentSort = "none";
 
+function getActiveItems(){
+  return currentTab === "main" ? mainItems : chocottoItems;
+}
+
 function render(){
   const grid = document.getElementById("grid");
-  let list = items.filter(it => currentStatus === "all" || it.status === currentStatus);
+  let list = getActiveItems().filter(it => currentStatus === "all" || it.status === currentStatus);
 
   if (currentSort === "asc") list = [...list].sort((a,b)=>a.price-b.price);
   if (currentSort === "desc") list = [...list].sort((a,b)=>b.price-a.price);
@@ -362,6 +459,21 @@ function render(){
     grid.appendChild(card);
   });
 }
+
+document.getElementById("tabBar").addEventListener("click", (e)=>{
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  currentTab = btn.dataset.tab;
+  document.querySelectorAll("#tabBar .tab").forEach(c=>c.classList.remove("active"));
+  btn.classList.add("active");
+
+  const note = document.getElementById("tabNote");
+  note.textContent = currentTab === "main"
+    ? "いつも気にかけてくださって、ありがとうございます。よろしければ、こちらの中からお選びいただけると嬉しいです♪"
+    : "誕生日などの記念日でなくても、ちょっと何か贈りたいな、という時にどうぞ♪ 気軽に選んでいただけると嬉しいです。";
+
+  render();
+});
 
 document.getElementById("statusFilters").addEventListener("click", (e)=>{
   const btn = e.target.closest(".chip");
